@@ -63,9 +63,61 @@ class GDPVisualizerApp:
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
 
     def load_countries(self):
-        pass
+        """加载可用的国家列表"""
+        self.status_var.set("正在加载国家列表...")
+        self.root.update()
+        
+        countries = self.data_fetcher.get_available_countries()
+        
+        if countries:
+            self.country_combo['values'] = countries
+            self.status_var.set(f"已加载 {len(countries)} 个国家")
+        else:
+            self.status_var.set("加载国家列表失败")
+            messagebox.showerror("错误", "无法加载国家列表，请检查网络连接")
 
     def fetch_and_display_data(self):
+        """获取并显示选定国家的数据"""
+        country_name = self.country_combo.get()
+        
+        if not country_name:
+            messagebox.showwarning("警告", "请选择一个国家")
+            return
+            
+        # 获取国家代码
+        country_code = self.data_fetcher.get_country_code(country_name)
+        if not country_code:
+            messagebox.showwarning("警告", f"未找到 {country_name} 的国家代码")
+            return
+        
+        try:
+            start = int(self.start_year.get())
+            end = int(self.end_year.get())
+            
+            if start > end:
+                messagebox.showwarning("警告", "起始年份不能大于结束年份")
+                return
+                
+        except ValueError:
+            messagebox.showwarning("警告", "请输入有效的年份")
+            return
+        
+        self.status_var.set(f"正在获取 {country_name} 的数据...")
+        self.root.update()
+        
+        # 获取数据
+        data = self.data_fetcher.get_country_data(country_code, start, end)
+        
+        if not data["GDP"] or not data["GDP_per_capita"]:
+            self.status_var.set("获取数据失败")
+            messagebox.showerror("错误", f"无法获取 {country_name} 的数据")
+            return
+            
+        # 显示图表
+        self.plot_data(country_name, data, start, end)
+        self.status_var.set(f"已显示 {country_name} 从 {start} 到 {end} 年的数据")
+
+    def plot_data(self, country, data, start_year, end_year):
         pass
 
 
