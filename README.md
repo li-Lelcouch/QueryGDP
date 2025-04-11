@@ -12,7 +12,7 @@ This application provides an interactive visualization tool for exploring GDP an
 ## 安装要求
 
 ```bash
-pip install requests pandas matplotlib
+pip install requests matplotlib
 ```
 
 ## 使用方法
