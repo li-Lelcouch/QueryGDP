@@ -118,7 +118,36 @@ class GDPVisualizerApp:
         self.status_var.set(f"已显示 {country_name} 从 {start} 到 {end} 年的数据")
 
     def plot_data(self, country, data, start_year, end_year):
-        pass
+        """绘制数据图表"""
+        self.figure.clear()
+        
+        # 创建GDP子图
+        ax1 = self.figure.add_subplot(211)
+        years = sorted([int(y) for y in data["GDP"].keys() if start_year <= int(y) <= end_year])
+        values = [data["GDP"][str(y)] for y in years]
+        
+        # 将GDP值从美元转换为十亿美元，以便更好地显示
+        values = [v / 1e9 for v in values]
+        
+        ax1.plot(years, values, 'b-o', linewidth=2)
+        ax1.set_title(f"{country}的GDP ({start_year}-{end_year})")
+        ax1.set_xlabel("年份")
+        ax1.set_ylabel("GDP (十亿美元)")
+        ax1.grid(True)
+        
+        # 创建人均GDP子图
+        ax2 = self.figure.add_subplot(212)
+        pc_years = sorted([int(y) for y in data["GDP_per_capita"].keys() if start_year <= int(y) <= end_year])
+        pc_values = [data["GDP_per_capita"][str(y)] for y in pc_years]
+        
+        ax2.plot(pc_years, pc_values, 'r-o', linewidth=2)
+        ax2.set_title(f"{country}的人均GDP ({start_year}-{end_year})")
+        ax2.set_xlabel("年份")
+        ax2.set_ylabel("人均GDP (美元)")
+        ax2.grid(True)
+        
+        self.figure.tight_layout()
+        self.plot_canvas.draw()
 
 
 
