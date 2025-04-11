@@ -4,7 +4,8 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import tkinter as tk
 from tkinter import ttk, messagebox
 from gdp_data import GDPDataFetcher
-
+plt.rcParams["font.sans-serif"]=["SimHei"] #设置字体
+plt.rcParams["axes.unicode_minus"]=False #该语句解决图像中的“-”负号的乱码问题
 class GDPVisualizerApp:
     def __init__(self, root):
         self.root = root

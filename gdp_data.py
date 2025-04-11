@@ -1,5 +1,5 @@
 import requests
-import pandas as pd
+
 
 class GDPDataFetcher:
     def __init__(self, proxy=None):
