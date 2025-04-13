@@ -15,9 +15,13 @@ class GDPDataFetcher:
         # 获取人均GDP数据作为第二个指标 (NY.GDP.PCAP.CD 是人均GDP(当前美元))
         gdp_pc_data = self._fetch_indicator("NY.GDP.PCAP.CD", country_code, start_year, end_year)
         
+        # 获取人口总数数据 (SP.POP.TOTL 是人口总数)
+        population_data = self._fetch_indicator("SP.POP.TOTL", country_code, start_year, end_year)
+        
         return {
             "GDP": gdp_data,
-            "GDP_per_capita": gdp_pc_data
+            "GDP_per_capita": gdp_pc_data,
+            "Population": population_data
         }
     
     def _fetch_indicator(self, indicator, country_code, start_year, end_year):

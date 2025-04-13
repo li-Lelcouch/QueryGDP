@@ -116,44 +116,56 @@ class GDPVisualizerApp:
             
         # 显示图表
         self.plot_data(country_name, data, start, end)
-        self.status_var.set(f"已显示 {country_name} 从 {start} 到 {end} 年的数据")
+        self.status_var.set(f"已显示 {country_name} 从 {start} 到 {end} 年的GDP、人均GDP和人口数据")
 
     def plot_data(self, country, data, start_year, end_year):
         """绘制数据图表"""
         self.figure.clear()
         
-        # 创建GDP子图
-        ax1 = self.figure.add_subplot(211)
+        # 创建三个子图
+        ax1 = self.figure.add_subplot(311)  # 改为3行1列的第1个图
+        ax2 = self.figure.add_subplot(312)  # 改为3行1列的第2个图
+        ax3 = self.figure.add_subplot(313)  # 新增的第3个图，用于显示人口数据
+        
+        # 获取并绘制GDP数据
         years = sorted([int(y) for y in data["GDP"].keys() if start_year <= int(y) <= end_year])
         values = [data["GDP"][str(y)] for y in years]
-        
-        # 将GDP值从美元转换为十亿美元，以便更好地显示
-        values = [v / 1e9 for v in values]
+        values = [v / 1e9 for v in values]  # 转换为十亿美元
         
         ax1.plot(years, values, 'b-o', linewidth=2)
         ax1.set_title(f"{country}的GDP ({start_year}-{end_year})")
-        ax1.set_xlabel("年份")
         ax1.set_ylabel("GDP (十亿美元)")
         ax1.grid(True)
         
-        # 创建人均GDP子图
-        ax2 = self.figure.add_subplot(212)
+        # 获取并绘制人均GDP数据
         pc_years = sorted([int(y) for y in data["GDP_per_capita"].keys() if start_year <= int(y) <= end_year])
         pc_values = [data["GDP_per_capita"][str(y)] for y in pc_years]
         
         ax2.plot(pc_years, pc_values, 'r-o', linewidth=2)
         ax2.set_title(f"{country}的人均GDP ({start_year}-{end_year})")
-        ax2.set_xlabel("年份")
         ax2.set_ylabel("人均GDP (美元)")
         ax2.grid(True)
         
+        # 获取并绘制人口数据
+        if "Population" in data and data["Population"]:
+            pop_years = sorted([int(y) for y in data["Population"].keys() if start_year <= int(y) <= end_year])
+            pop_values = [data["Population"][str(y)] for y in pop_years]
+            
+            # 将人口数据转换为百万人口单位，以便更好地显示
+            pop_values = [p / 1e6 for p in pop_values]
+            
+            ax3.plot(pop_years, pop_values, 'g-o', linewidth=2)
+            ax3.set_title(f"{country}的人口总数 ({start_year}-{end_year})")
+            ax3.set_xlabel("年份")
+            ax3.set_ylabel("人口数量 (百万)")
+            ax3.grid(True)
+        
+        # 只在最下面的子图显示x轴标签
+        ax1.set_xticklabels([])
+        ax2.set_xticklabels([])
+        
         self.figure.tight_layout()
         self.plot_canvas.draw()
-
-
-
-
-
 
 def main():
     root = tk.Tk()
